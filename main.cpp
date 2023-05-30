@@ -81,11 +81,20 @@ Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2)
 
 }
 // 4. 逆行列
-Matrix4x4 Inverse(const Matrix4x4& m);
+Matrix4x4 Inverse(const Matrix4x4& m)
+{
+
+}
 // 5. 転置行列
-Matrix4x4 Transpose(const Matrix4x4& m);
+Matrix4x4 Transpose(const Matrix4x4& m)
+{
+
+}
 // 6. 単位行列の作成
-Matrix4x4 MakeIdentity4x4();
+Matrix4x4 MakeIdentity4x4()
+{
+
+}
 
 static const int kRowHeight = 20;
 static const int kColumnWidth = 60;
