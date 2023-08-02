@@ -1,5 +1,9 @@
-﻿#include <Novice.h>
+﻿#define _USE_MATH_DEFINES
+
+#include <Novice.h>
 #include <cmath>
+#include <assert.h>
+
 
 const char kWindowTitle[] = "GC2C_08_タカハシシンイチ_MT3_00_02";
 
@@ -78,62 +82,192 @@ Matrix4x4 Subtract(const Matrix4x4& m1, const Matrix4x4& m2)
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2)
 {
 	Matrix4x4 result{};
+	// 1列目
+	result.m[0][0] = m1.m[0][0] * m2.m[0][0] + m1.m[0][1] * m2.m[1][0] + m1.m[0][2] * m2.m[2][0] + m1.m[0][3] * m2.m[3][0];
+	result.m[0][1] = m1.m[0][0] * m2.m[0][1] + m1.m[0][1] * m2.m[1][1] + m1.m[0][2] * m2.m[2][1] + m1.m[0][3] * m2.m[3][1];
+	result.m[0][2] = m1.m[0][0] * m2.m[0][2] + m1.m[0][1] * m2.m[1][2] + m1.m[0][2] * m2.m[2][2] + m1.m[0][3] * m2.m[3][2];
+	result.m[0][3] = m1.m[0][0] * m2.m[0][3] + m1.m[0][1] * m2.m[1][3] + m1.m[0][2] * m2.m[2][3] + m1.m[0][3] * m2.m[3][3];
 
-	float determinant = (m1.m[0][0] * m1.m[1][1] * m1.m[2][2] * m1.m[3][3]) + (m1.m[0][0] * m1.m[1][2] * m1.m[2][3] * m1.m[3][1]) + (m1.m[0][0] * m1.m[1][3] * m1.m[2][1] * m1.m[3][2])
-	    - (m1.m[0][0] * m1.m[1][3] * m1.m[2][2] * m1.m[3][1]) - (m1.m[0][0] * m1.m[1][2] * m1.m[2][1] * m1.m[3][3]) - (m1.m[0][0] * m1.m[1][1] * m1.m[2][3] * m1.m[3][2])
-	    - (m1.m[0][1] * m1.m[1][0] * m1.m[2][2] * m1.m[3][3]) - (m1.m[0][2] * m1.m[1][0] * m1.m[2][3] * m1.m[3][1]) - (m1.m[0][3] * m1.m[1][0] * m1.m[2][1] * m1.m[3][2])
-	    + (m1.m[0][3] * m1.m[1][0] * m1.m[2][2] * m1.m[3][1]) + (m1.m[0][2] * m1.m[1][0] * m1.m[2][1] * m1.m[3][3]) + (m1.m[0][1] * m1.m[1][0] * m1.m[2][3] * m1.m[3][2])
-	    + (m1.m[0][1] * m1.m[1][2] * m1.m[2][0] * m1.m[3][3]) + (m1.m[0][2] * m1.m[1][3] * m1.m[2][0] * m1.m[3][1]) + (m1.m[0][3] * m1.m[1][1] * m1.m[2][0] * m1.m[3][2])
-	    - (m1.m[0][3] * m1.m[1][2] * m1.m[2][0] * m1.m[3][1]) - (m1.m[0][2] * m1.m[1][1] * m1.m[2][0] * m1.m[3][3]) - (m1.m[0][1] * m1.m[1][3] * m1.m[2][0] * m1.m[3][2])
-	    - (m1.m[0][1] * m1.m[1][2] * m1.m[2][3] * m1.m[3][0]) - (m1.m[0][2] * m1.m[1][3] * m1.m[2][1] * m1.m[3][0]) - (m1.m[0][3] * m1.m[1][1] * m1.m[2][2] * m1.m[3][0])
-	    + (m1.m[0][3] * m1.m[1][2] * m1.m[2][1] * m1.m[3][0]) + (m1.m[0][2] * m1.m[1][1] * m1.m[2][3] * m1.m[3][0]) + (m1.m[0][1] * m1.m[1][3] * m1.m[2][2] * m1.m[3][0]);
+	// 2列目
+	result.m[1][0]= m1.m[1][0] * m2.m[0][0] + m1.m[1][1] * m2.m[1][0] + m1.m[1][2] * m2.m[2][0] + m1.m[1][3] * m2.m[3][0];
+	result.m[1][1]= m1.m[1][0] * m2.m[0][1] + m1.m[1][1] * m2.m[1][1] + m1.m[1][2] * m2.m[2][1] + m1.m[1][3] * m2.m[3][1];
+	result.m[1][2]= m1.m[1][0] * m2.m[0][2] + m1.m[1][1] * m2.m[1][2] + m1.m[1][2] * m2.m[2][2] + m1.m[1][3] * m2.m[3][2];
+	result.m[1][3]= m1.m[1][0] * m2.m[0][3] + m1.m[1][1] * m2.m[1][3] + m1.m[1][2] * m2.m[2][3] + m1.m[1][3] * m2.m[3][3];
+
+	// 3列目
+	result.m[2][0] = m1.m[2][0] * m2.m[0][0] + m1.m[2][1] * m2.m[1][0] + m1.m[2][2] * m2.m[2][0] + m1.m[2][3] * m2.m[3][0];
+	result.m[2][1] = m1.m[2][0] * m2.m[0][1] + m1.m[2][1] * m2.m[1][1] + m1.m[2][2] * m2.m[2][1] + m1.m[2][3] * m2.m[3][1];
+	result.m[2][2] = m1.m[2][0] * m2.m[0][2] + m1.m[2][1] * m2.m[1][2] + m1.m[2][2] * m2.m[2][2] + m1.m[2][3] * m2.m[3][2];
+	result.m[2][3] = m1.m[2][0] * m2.m[0][3] + m1.m[2][1] * m2.m[1][3] + m1.m[2][2] * m2.m[2][3] + m1.m[2][3] * m2.m[3][3];
+
+	// 4列目
+	result.m[3][0] = m1.m[3][0] * m2.m[0][0] + m1.m[3][1] * m2.m[1][0] + m1.m[3][2] * m2.m[2][0] + m1.m[3][3] * m2.m[3][0];
+	result.m[3][1] = m1.m[3][0] * m2.m[0][1] + m1.m[3][1] * m2.m[1][1] + m1.m[3][2] * m2.m[2][1] + m1.m[3][3] * m2.m[3][1];
+	result.m[3][2] = m1.m[3][0] * m2.m[0][2] + m1.m[3][1] * m2.m[1][2] + m1.m[3][2] * m2.m[2][2] + m1.m[3][3] * m2.m[3][2];
+	result.m[3][3] = m1.m[3][0] * m2.m[0][3] + m1.m[3][1] * m2.m[1][3] + m1.m[3][2] * m2.m[2][3] + m1.m[3][3] * m2.m[3][3];
 
 	return result;
 }
+
 // 4. 逆行列
-Matrix4x4 Inverse(const Matrix4x4& m1)
+Matrix4x4 Inverse(const Matrix4x4& m)
 {
-	Matrix4x4 result{};
+	Matrix4x4 resultInverse;
+	float determinant = m.m[0][0] * m.m[1][1] * m.m[2][2] * m.m[3][3] +
+		m.m[0][0] * m.m[1][2] * m.m[2][3] * m.m[3][1] +
+		m.m[0][0] * m.m[1][3] * m.m[2][1] * m.m[3][2] -
 
-	////逆行列の各値を求める
-	////0行目
-	//result.m[0][0] = ((m1.m[1][1] * m1.m[2][2] * m1.m[3][3]) + (m1.m[1][2] * m1.m[2][3] * m1.m[3][1]) + (m1.m[1][3] * m1.m[2][1] * m1.m[3][2])
-	//	- (m1.m[1][3] * m1.m[2][2] * m1.m[3][1]) - (m1.m[1][2] * m1.m[2][1] * m1.m[3][3]) - (m1.m[1][1] * m1.m[2][3] * m1.m[3][2])) / determinant;
-	//result.m[0][1] = (-(m1.m[0][1] * m1.m[2][2] * m1.m[3][3]) - (m1.m[0][2] * m1.m[2][3] * m1.m[3][1]) - (m1.m[0][3] * m1.m[2][1] * m1.m[3][2])
-	//	+ (m1.m[0][3] * m1.m[2][2] * m1.m[3][1]) + (m1.m[0][2] * m1.m[2][1] * m1.m[3][3]) + (m1.m[0][1] * m1.m[2][3] * m1.m[3][2])) / determinant;
-	//result.m[0][2] = ((m1.m[0][1] * m1.m[1][2] * m1.m[3][3]) + (m1.m[0][2] * m1.m[1][3] * m1.m[3][1]) + (m1.m[0][3] * m1.m[1][1] * m1.m[3][2])
-	//	- (m1.m[0][3] * m1.m[1][2] * m1.m[3][1]) - (m1.m[0][2] * m1.m[1][1] * m1.m[3][3]) - (m1.m[0][1] * m1.m[1][3] * m1.m[3][2])) / determinant;
-	//result.m[0][3] = (-(m1.m[0][1] * m1.m[1][2] * m1.m[2][3]) - (m1.m[0][2] * m1.m[1][3] * m1.m[2][1]) - (m1.m[0][3] * m1.m[1][1] * m1.m[2][2])
-	//	+ (m1.m[0][3] * m1.m[1][2] * m1.m[2][1]) + (m1.m[0][2] * m1.m[1][1] * m1.m[2][3]) + (m1.m[0][1] * m1.m[1][3] * m1.m[2][2])) / determinant;
-	////1行目
-	//result.m[1][0] = (-(m1.m[1][0] * m1.m[2][2] * m1.m[3][3]) - (m1.m[1][2] * m1.m[2][3] * m1.m[3][0]) - (m1.m[1][3] * m1.m[2][0] * m1.m[3][2])
-	//	+ (m1.m[1][3] * m1.m[2][2] * m1.m[3][0]) + (m1.m[1][2] * m1.m[2][0] * m1.m[3][3]) + (m1.m[1][0] * m1.m[2][3] * m1.m[3][2])) / determinant;
-	//result.m[1][1] = ((m1.m[0][0] * m1.m[2][2] * m1.m[3][3]) + (m1.m[0][2] * m1.m[2][3] * m1.m[3][0]) + (m1.m[0][3] * m1.m[2][0] * m1.m[3][2])
-	//	- (m1.m[0][3] * m1.m[2][2] * m1.m[3][0]) - (m1.m[0][2] * m1.m[2][0] * m1.m[3][3]) - (m1.m[0][0] * m1.m[2][3] * m1.m[3][2])) / determinant;
-	//result.m[1][2] = (-(m1.m[0][0] * m1.m[1][2] * m1.m[3][3]) - (m1.m[0][2] * m1.m[1][3] * m1.m[3][0]) - (m1.m[0][3] * m1.m[1][0] * m1.m[3][2])
-	//	+ (m1.m[0][3] * m1.m[1][2] * m1.m[3][0]) + (m1.m[0][2] * m1.m[1][0] * m1.m[3][3]) + (m1.m[0][0] * m1.m[1][3] * m1.m[3][2])) / determinant;
-	//result.m[1][3] = ((m1.m[0][0] * m1.m[1][2] * m1.m[2][3]) + (m1.m[0][2] * m1.m[1][3] * m1.m[2][0]) + (m1.m[0][3] * m1.m[1][0] * m1.m[2][2])
-	//	- (m1.m[0][3] * m1.m[1][2] * m1.m[2][0]) - (m1.m[0][2] * m1.m[1][0] * m1.m[2][3]) - (m1.m[0][0] * m1.m[1][3] * m1.m[2][2])) / determinant;
-	////2行目
-	//result.m[2][0] = ((m1.m[1][0] * m1.m[2][1] * m1.m[3][3]) + (m1.m[1][1] * m1.m[2][3] * m1.m[3][0]) + (m1.m[1][3] * m1.m[2][0] * m1.m[3][1])
-	//	- (m1.m[1][3] * m1.m[2][1] * m1.m[3][0]) - (m1.m[1][1] * m1.m[2][0] * m1.m[3][3]) - (m1.m[1][0] * m1.m[2][3] * m1.m[3][1])) / determinant;
-	//result.m[2][1] = (-(m1.m[0][0] * m1.m[2][1] * m1.m[3][3]) - (m1.m[0][1] * m1.m[2][3] * m1.m[3][0]) - (m1.m[0][3] * m1.m[2][0] * m1.m[3][1])
-	//	+ (m1.m[0][3] * m1.m[2][1] * m1.m[3][0]) + (m1.m[0][1] * m1.m[2][0] * m1.m[3][3]) + (m1.m[0][0] * m1.m[2][3] * m1.m[3][1])) / determinant;
-	//result.m[2][2] = ((m1.m[0][0] * m1.m[1][1] * m1.m[3][3]) + (m1.m[0][1] * m1.m[1][3] * m1.m[3][0]) + (m1.m[0][3] * m1.m[1][0] * m1.m[3][1])
-	//	- (m1.m[0][3] * m1.m[1][1] * m1.m[3][0]) - (m1.m[0][1] * m1.m[1][0] * m1.m[3][3]) - (m1.m[0][0] * m1.m[1][3] * m1.m[3][1])) / determinant;
-	//result.m[2][3] = (-(m1.m[0][0] * m1.m[1][1] * m1.m[2][3]) - (m1.m[0][1] * m1.m[1][3] * m1.m[2][0]) - (m1.m[0][3] * m1.m[1][0] * m1.m[2][1])
-	//	+ (m1.m[0][3] * m1.m[1][1] * m1.m[2][0]) + (m1.m[0][1] * m1.m[1][0] * m1.m[2][3]) + (m1.m[0][0] * m1.m[1][3] * m1.m[2][1])) / determinant;
-	////3行目
-	//result.m[3][0] = (-(m1.m[1][0] * m1.m[2][1] * m1.m[3][2]) - (m1.m[1][1] * m1.m[2][2] * m1.m[3][0]) - (m1.m[1][2] * m1.m[2][0] * m1.m[3][1])
-	//	+ (m1.m[1][2] * m1.m[2][1] * m1.m[3][0]) + (m1.m[1][1] * m1.m[2][0] * m1.m[3][2]) + (m1.m[1][0] * m1.m[2][2] * m1.m[3][1])) / determinant;
-	//result.m[3][1] = ((m1.m[0][0] * m1.m[2][1] * m1.m[3][2]) + (m1.m[0][1] * m1.m[2][2] * m1.m[3][0]) + (m1.m[0][2] * m1.m[2][0] * m1.m[3][1])
-	//	- (m1.m[0][2] * m1.m[2][1] * m1.m[3][0]) - (m1.m[0][1] * m1.m[2][0] * m1.m[3][2]) - (m1.m[0][0] * m1.m[2][2] * m1.m[3][1])) / determinant;
-	//result.m[3][2] = (-(m1.m[0][0] * m1.m[1][1] * m1.m[3][2]) - (m1.m[0][1] * m1.m[1][2] * m1.m[3][0]) - (m1.m[0][2] * m1.m[1][0] * m1.m[3][1])
-	//	+ (m1.m[0][2] * m1.m[1][1] * m1.m[3][0]) + (m1.m[0][1] * m1.m[1][0] * m1.m[3][2]) + (m1.m[0][0] * m1.m[1][2] * m1.m[3][1])) / determinant;
-	//result.m[3][3] = ((m1.m[0][0] * m1.m[1][1] * m1.m[2][2]) + (m1.m[0][1] * m1.m[1][2] * m1.m[2][0]) + (m1.m[0][2] * m1.m[1][0] * m1.m[2][1])
-	//	- (m1.m[0][2] * m1.m[1][1] * m1.m[2][0]) - (m1.m[0][1] * m1.m[1][0] * m1.m[2][2]) - (m1.m[0][0] * m1.m[1][2] * m1.m[2][1])) / determinant;
-	return result;
+		m.m[0][0] * m.m[1][3] * m.m[2][2] * m.m[3][1] -
+		m.m[0][0] * m.m[1][2] * m.m[2][1] * m.m[3][3] -
+		m.m[0][0] * m.m[1][1] * m.m[2][3] * m.m[3][2] -
+
+		m.m[0][1] * m.m[1][0] * m.m[2][2] * m.m[3][3] -
+		m.m[0][2] * m.m[1][0] * m.m[2][3] * m.m[3][1] -
+		m.m[0][3] * m.m[1][0] * m.m[2][1] * m.m[3][2] +
+
+		m.m[0][3] * m.m[1][0] * m.m[2][2] * m.m[3][1] +
+		m.m[0][2] * m.m[1][0] * m.m[2][1] * m.m[3][3] +
+		m.m[0][1] * m.m[1][0] * m.m[2][3] * m.m[3][2] +
+
+		m.m[0][1] * m.m[1][2] * m.m[2][0] * m.m[3][3] +
+		m.m[0][2] * m.m[1][3] * m.m[2][0] * m.m[3][1] +
+		m.m[0][3] * m.m[1][1] * m.m[2][0] * m.m[3][2] -
+
+		m.m[0][3] * m.m[1][2] * m.m[2][0] * m.m[3][1] -
+		m.m[0][2] * m.m[1][1] * m.m[2][0] * m.m[3][3] -
+		m.m[0][1] * m.m[1][3] * m.m[2][0] * m.m[3][2] -
+
+		m.m[0][1] * m.m[1][2] * m.m[2][3] * m.m[3][0] -
+		m.m[0][2] * m.m[1][3] * m.m[2][1] * m.m[3][0] -
+		m.m[0][3] * m.m[1][1] * m.m[2][2] * m.m[3][0] +
+
+		m.m[0][3] * m.m[1][2] * m.m[2][1] * m.m[3][0] +
+		m.m[0][2] * m.m[1][1] * m.m[2][3] * m.m[3][0] +
+		m.m[0][1] * m.m[1][3] * m.m[2][2] * m.m[3][0];
+
+
+	assert(determinant != 0.0f);
+	float determinantRecp = 1.0f / determinant;
+
+	//1行目
+	resultInverse.m[0][0] = (m.m[1][1] * m.m[2][2] * m.m[3][3] +
+		m.m[1][2] * m.m[2][3] * m.m[3][1] +
+		m.m[1][3] * m.m[2][1] * m.m[3][2] -
+		m.m[1][3] * m.m[2][2] * m.m[3][1] -
+		m.m[1][2] * m.m[2][1] * m.m[3][3] -
+		m.m[1][1] * m.m[2][3] * m.m[3][2]) * determinantRecp;
+
+	resultInverse.m[0][1] = -(m.m[0][1] * m.m[2][2] * m.m[3][3] +
+		m.m[0][2] * m.m[2][3] * m.m[3][1] +
+		m.m[0][3] * m.m[2][1] * m.m[3][2] -
+		m.m[0][3] * m.m[2][2] * m.m[3][1] -
+		m.m[0][2] * m.m[2][1] * m.m[3][3] -
+		m.m[0][1] * m.m[2][3] * m.m[3][2]) * determinantRecp;
+
+	resultInverse.m[0][2] = (m.m[0][1] * m.m[1][2] * m.m[3][3] +
+		m.m[0][2] * m.m[1][3] * m.m[3][1] +
+		m.m[0][3] * m.m[1][1] * m.m[3][2] -
+		m.m[0][3] * m.m[1][2] * m.m[3][1] -
+		m.m[0][2] * m.m[1][1] * m.m[3][3] -
+		m.m[0][1] * m.m[1][3] * m.m[3][2]) * determinantRecp;
+
+	resultInverse.m[0][3] = -(m.m[0][1] * m.m[1][2] * m.m[2][3] +
+		m.m[0][2] * m.m[1][3] * m.m[2][1] +
+		m.m[0][3] * m.m[1][1] * m.m[2][2] -
+		m.m[0][3] * m.m[1][2] * m.m[2][1] -
+		m.m[0][2] * m.m[1][1] * m.m[2][3] -
+		m.m[0][1] * m.m[1][3] * m.m[2][2]) * determinantRecp;
+
+	//2行目
+	resultInverse.m[1][0] = -(m.m[1][0] * m.m[2][2] * m.m[3][3] +
+		m.m[1][2] * m.m[2][3] * m.m[3][0] +
+		m.m[1][3] * m.m[2][0] * m.m[3][2] -
+		m.m[1][3] * m.m[2][2] * m.m[3][0] -
+		m.m[1][2] * m.m[2][0] * m.m[3][3] -
+		m.m[1][0] * m.m[2][3] * m.m[3][2]) * determinantRecp;
+
+	resultInverse.m[1][1] = (m.m[0][0] * m.m[2][2] * m.m[3][3] +
+		m.m[0][2] * m.m[2][3] * m.m[3][0] +
+		m.m[0][3] * m.m[2][0] * m.m[3][2] -
+		m.m[0][3] * m.m[2][2] * m.m[3][0] -
+		m.m[0][2] * m.m[2][0] * m.m[3][3] -
+		m.m[0][0] * m.m[2][3] * m.m[3][2]) * determinantRecp;
+
+	resultInverse.m[1][2] = -(m.m[0][0] * m.m[1][2] * m.m[3][3] +
+		m.m[0][2] * m.m[1][3] * m.m[3][0] +
+		m.m[0][3] * m.m[1][0] * m.m[3][2] -
+		m.m[0][3] * m.m[1][2] * m.m[3][0] -
+		m.m[0][2] * m.m[1][0] * m.m[3][3] -
+		m.m[0][0] * m.m[1][3] * m.m[3][2]) * determinantRecp;
+
+	resultInverse.m[1][3] = (m.m[0][0] * m.m[1][2] * m.m[2][3] +
+		m.m[0][2] * m.m[1][3] * m.m[2][0] +
+		m.m[0][3] * m.m[1][0] * m.m[2][2] -
+		m.m[0][3] * m.m[1][2] * m.m[2][0] -
+		m.m[0][2] * m.m[1][0] * m.m[2][3] -
+		m.m[0][0] * m.m[1][3] * m.m[2][2]) * determinantRecp;
+
+	//3行目
+	resultInverse.m[2][0] = (m.m[1][0] * m.m[2][1] * m.m[3][3] +
+		m.m[1][1] * m.m[2][3] * m.m[3][0] +
+		m.m[1][3] * m.m[2][0] * m.m[3][1] -
+		m.m[1][3] * m.m[2][1] * m.m[3][0] -
+		m.m[1][1] * m.m[2][0] * m.m[3][3] -
+		m.m[1][0] * m.m[2][3] * m.m[3][1]) * determinantRecp;
+
+	resultInverse.m[2][1] = -(m.m[0][0] * m.m[2][1] * m.m[3][3] +
+		m.m[0][1] * m.m[2][3] * m.m[3][0] +
+		m.m[0][3] * m.m[2][0] * m.m[3][1] -
+		m.m[0][3] * m.m[2][1] * m.m[3][0] -
+		m.m[0][1] * m.m[2][0] * m.m[3][3] -
+		m.m[0][0] * m.m[2][3] * m.m[3][1]) * determinantRecp;
+
+	resultInverse.m[2][2] = (m.m[0][0] * m.m[1][1] * m.m[3][3] +
+		m.m[0][1] * m.m[1][3] * m.m[3][0] +
+		m.m[0][3] * m.m[1][0] * m.m[3][1] -
+		m.m[0][3] * m.m[1][1] * m.m[3][0] -
+		m.m[0][1] * m.m[1][0] * m.m[3][3] -
+		m.m[0][0] * m.m[1][3] * m.m[3][1]) * determinantRecp;
+
+	resultInverse.m[2][3] = -(m.m[0][0] * m.m[1][1] * m.m[2][3] +
+		m.m[0][1] * m.m[1][3] * m.m[2][0] +
+		m.m[0][3] * m.m[1][0] * m.m[2][1] -
+		m.m[0][3] * m.m[1][1] * m.m[2][0] -
+		m.m[0][1] * m.m[1][0] * m.m[2][3] -
+		m.m[0][0] * m.m[1][3] * m.m[2][1]) * determinantRecp;
+
+	//4行目
+	resultInverse.m[3][0] = -(m.m[1][0] * m.m[2][1] * m.m[3][2] +
+		m.m[1][1] * m.m[2][2] * m.m[3][0] +
+		m.m[1][2] * m.m[2][0] * m.m[3][1] -
+		m.m[1][2] * m.m[2][1] * m.m[3][0] -
+		m.m[1][1] * m.m[2][0] * m.m[3][2] -
+		m.m[1][0] * m.m[2][2] * m.m[3][1]) * determinantRecp;
+
+	resultInverse.m[3][1] = (m.m[0][0] * m.m[2][1] * m.m[3][2] +
+		m.m[0][1] * m.m[2][2] * m.m[3][0] +
+		m.m[0][2] * m.m[2][0] * m.m[3][1] -
+		m.m[0][2] * m.m[2][1] * m.m[3][0] -
+		m.m[0][1] * m.m[2][0] * m.m[3][2] -
+		m.m[0][0] * m.m[2][2] * m.m[3][1]) * determinantRecp;
+
+	resultInverse.m[3][2] = -(m.m[0][0] * m.m[1][1] * m.m[3][2] +
+		m.m[0][1] * m.m[1][2] * m.m[3][0] +
+		m.m[0][2] * m.m[1][0] * m.m[3][1] -
+		m.m[0][2] * m.m[1][1] * m.m[3][0] -
+		m.m[0][1] * m.m[1][0] * m.m[3][2] -
+		m.m[0][0] * m.m[1][2] * m.m[3][1]) * determinantRecp;
+
+	resultInverse.m[3][3] = (m.m[0][0] * m.m[1][1] * m.m[2][2] +
+		m.m[0][1] * m.m[1][2] * m.m[2][0] +
+		m.m[0][2] * m.m[1][0] * m.m[2][1] -
+		m.m[0][2] * m.m[1][1] * m.m[2][0] -
+		m.m[0][1] * m.m[1][0] * m.m[2][2] -
+		m.m[0][0] * m.m[1][2] * m.m[2][1]) * determinantRecp;
+
+	return resultInverse;
 }
+
 // 5. 転置行列
 Matrix4x4 Transpose(const Matrix4x4& m)
 {
@@ -231,7 +365,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		Matrix4x4 resultAdd = Add(m1, m2);
-		Matrix4x4 resultMultiply = Multiply(m1, m2);
+		Matrix4x4 resultMultiply = Multiply(m1,m2);
 		Matrix4x4 resultSubtract = Subtract(m1, m2);
 		Matrix4x4 inverseM1 = Inverse(m1);
 		Matrix4x4 inverseM2 = Inverse(m2);
@@ -247,14 +381,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
+
 		MatrixScreenPrintf(0, 0, resultAdd, "Add");
-		MatrixScreenPrintf(0, kRowHeight * 5, resultSubtract, "Subtract");
-		MatrixScreenPrintf(0, kRowHeight * 5 * 2, resultMultiply, "Multiply");
-		MatrixScreenPrintf(0, kRowHeight * 5 * 3, inverseM1, "inverseM1");
-		MatrixScreenPrintf(0, kRowHeight * 5 * 4, inverseM2, "inverseM2");
-		MatrixScreenPrintf(kColumnWidth * 5, 0, transposeM1, "transposeM1");
-		MatrixScreenPrintf(kColumnWidth * 5, kRowHeight * 5, transposeM2, "transposeM2");
-		MatrixScreenPrintf(kColumnWidth * 5, kRowHeight * 5 * 2, identity, "identity");
+		//MatrixScreenPrintf(0, kRowHeight * 5, resultSubtract, "Subtract");
+		//MatrixScreenPrintf(0, kRowHeight * 5 * 2, resultMultiply, "Multiply");
+		//MatrixScreenPrintf(0, kRowHeight * 5 * 3, inverseM1, "inverseM1");
+		//MatrixScreenPrintf(0, kRowHeight * 5 * 4, inverseM2, "inverseM2");
+		//MatrixScreenPrintf(kColumnWidth * 5, 0, transposeM1, "transposeM1");
+		//MatrixScreenPrintf(kColumnWidth * 5, kRowHeight * 5, transposeM2, "transposeM2");
+		//MatrixScreenPrintf(kColumnWidth * 5, kRowHeight * 5 * 2, identity, "identity");
 
 		///
 		/// ↑描画処理ここまで
