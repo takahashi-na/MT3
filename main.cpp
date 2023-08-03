@@ -62,12 +62,92 @@ Vector3 scale{ 1.2f,0.79f,-2.1f };
 Vector3 rotate{ 0.4f,1.43f,-0.8f };
 Vector3 translate{ 2.7f,-4.15f,1.57f };
 
+// 1.X軸回転行列
+Matrix4x4 MakeRotateXMatrix(float radian)
+{
+	Matrix4x4 result{};
+	result.m[0][0] = 1;
+	result.m[0][1] = 0;
+	result.m[0][2] = 0;
+	result.m[0][3] = 0;
+
+	result.m[1][0] = 0;
+	result.m[1][1] = std::cos(radian);
+	result.m[1][2] = std::sin(radian);
+	result.m[1][3] = 0;
+
+	result.m[2][0] = 0;
+	result.m[2][1] -= std::sin(radian);
+	result.m[2][2] = std::cos(radian);
+	result.m[2][3] = 0;
+
+	result.m[3][0] = 0;
+	result.m[3][1] = 0;
+	result.m[3][2] = 0;
+	result.m[3][3] = 1;
+
+	return result;
+}
+
+// 2.Y軸回転行列
+Matrix4x4 MakeRotateYMatrix(float radian)
+{
+	Matrix4x4 result{};
+	result.m[0][0] = std::cos(radian);
+	result.m[0][1] = 0;
+	result.m[0][2] -= std::sin(radian);
+	result.m[0][3] = 0;
+
+	result.m[1][0] = 0;
+	result.m[1][1] = 1;
+	result.m[1][2] = 0;
+	result.m[1][3] = 0;
+
+	result.m[2][0] = std::sin(radian);
+	result.m[2][1] = 0;
+	result.m[2][2] = std::cos(radian);
+	result.m[2][3] = 0;
+
+	result.m[3][0] = 0;
+	result.m[3][1] = 0;
+	result.m[3][2] = 0;
+	result.m[3][3] = 1;
+
+	return result;
+}
+
+// 3.Z軸回転行列
+Matrix4x4 MakeRotateZMatrix(float radian)
+{
+	Matrix4x4 result{};
+	result.m[0][0] = std::cos(radian);
+	result.m[0][1] = std::sin(radian);
+	result.m[0][2] = 0;
+	result.m[0][3] = 0;
+
+	result.m[1][0] -= std::sin(radian);
+	result.m[1][1] = std::cos(radian);
+	result.m[1][2] = 0;
+	result.m[1][3] = 0;
+
+	result.m[2][0] = 0;
+	result.m[2][1] = 0;
+	result.m[2][2] = 1;
+	result.m[2][3] = 0;
+
+	result.m[3][0] = 0;
+	result.m[3][1] = 0;
+	result.m[3][2] = 0;
+	result.m[3][3] = 1;
+
+	return result;
+}
+
 
 // 3次元アフィン変換行列
 Matrix4x4 MakeAffineMatrix(const Vector3& scale,const Vector3& rotate,const Vector3& translate)
 {
-	Matrix4x4 result= Multiply(rotate.x * rotate.y * rotate.z) }
-	};
+	Matrix4x4 result = Multiply(Multiply(MakeRotateXMatrix(rotate.x), MakeRotateYMatrix(rotate.y)),MakeRotateZMatrix(rotate.z));
 
 	result.m[0][0] = scale.x;
 	result.m[0][1] = scale.x;
@@ -104,13 +184,6 @@ void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label
 		}
 	}
 }
-
-//void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label) {
-//	Novice::ScreenPrintf(x, y, "%.02f", vector.x);
-//	Novice::ScreenPrintf(x + kColumnWidth, y, "%.02f", vector.y);
-//	Novice::ScreenPrintf(x + kColumnWidth * 2, y, "%.02f", vector.z);
-//	Novice::ScreenPrintf(x + kColumnWidth * 3, y, "%s", label);
-//}
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
