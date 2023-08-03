@@ -208,7 +208,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-	
+
 		Matrix4x4 worldMatrix = MakeAffineMatrix(scale, rotate, translate);
 
 		///
