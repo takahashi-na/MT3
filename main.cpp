@@ -4,7 +4,7 @@
 #include <cmath>
 #include <assert.h>
 
-const char kWindowTitle[] = "GC2C_08_タカハシシンイチ_MT3_00_03";
+const char kWindowTitle[] = "GC2C_08_タカハシシンイチ_MT3_00_05";
 
 struct Vector2 {
 	float x, y;
