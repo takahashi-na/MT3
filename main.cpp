@@ -26,8 +26,7 @@ struct Matrix4x4 {
 	float m[4][4];
 };
 
-
-// 3. 行列の積
+// 行列の積
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2)
 {
 	Matrix4x4 result{};
@@ -57,10 +56,6 @@ Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2)
 
 	return result;
 }
-
-Vector3 scale{ 1.2f,0.79f,-2.1f };
-Vector3 rotate{ 0.4f,1.43f,-0.8f };
-Vector3 translate{ 2.7f,-4.15f,1.57f };
 
 // 1.X軸回転行列
 Matrix4x4 MakeRotateXMatrix(float radian)
@@ -149,7 +144,7 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale,const Vector3& rotate,const Vect
 {
 	Matrix4x4 result = Multiply(Multiply(MakeRotateXMatrix(rotate.x), MakeRotateYMatrix(rotate.y)),MakeRotateZMatrix(rotate.z));
 
-	result.m[0][0] = rotate.x;
+	result.m[0][0] = scale.x;
 	result.m[0][1] = scale.x;
 	result.m[0][2] = scale.x;
 	result.m[0][3] = 0;
@@ -208,6 +203,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
+		Vector3 scale{ 1.2f,0.79f,-2.1f };
+		Vector3 rotate{ 0.4f,1.43f,-0.8f };
+		Vector3 translate{ 2.7f,-4.15f,1.57f };
+		Matrix4x4 rotateXMatrix = MakeRotateXMatrix(rotate.x);
+		Matrix4x4 rotateYMatrix = MakeRotateYMatrix(rotate.y);
+		Matrix4x4 rotateZMatrix = MakeRotateZMatrix(rotate.z);
+		Matrix4x4 rotateXYZMatrix = Multiply(rotateXMatrix, Multiply(rotateYMatrix, rotateZMatrix));
 
 		Matrix4x4 worldMatrix = MakeAffineMatrix(scale, rotate, translate);
 
