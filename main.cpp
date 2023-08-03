@@ -3,6 +3,9 @@
 #include <Novice.h>
 #include <cmath>
 #include <assert.h>
+#include "DirectXCommon.h"
+#include "ImGuiManager.h"
+
 
 const char kWindowTitle[] = "GC2C_08_タカハシシンイチ_MT3_01_00";
 
@@ -341,6 +344,8 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 
 static const int kRowHeight = 20;
 static const int kColumnWidth = 60;
+float kWindowWidth = 1200;
+float kWindowHeight = 720;
 
 void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label) {
 	Novice::ScreenPrintf(x, y-15, "%s", label);
@@ -362,6 +367,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char keys[256] = {0};
 	char preKeys[256] = {0};
 
+
+	Vector3 cameraPosition{ 0.0f, 0.0f, -5.0f };
+	Vector3 scale{ 1.2f,0.79f,-2.1f };
+	Vector3 rotate{};
+	Vector3 translate{};
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -375,10 +386,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-		Vector3 scale{ 1.2f,0.79f,-2.1f };
-		Vector3 rotate{ 0.4f,1.43f,-0.8f };
-		Vector3 translate{ 2.7f,-4.15f,1.57f };
-	
 		Matrix4x4 orthographicMatrix =
 			MakeOrthographicMatrix(-160.0f, 160.0f, 200.0f, 300.0f, 0.0f, 1000.0f);
 		Matrix4x4 perspectiveFovMatrix =
@@ -386,7 +393,65 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewportMatrix =
 			MakeViewportMatrix(100.0f, 200.0f, 600.0f, 300.0f, 0.0f, 1.0f);
 
-		Matrix4x4 worldMatrix = MakeAffineMatrix(scale, rotate, translate);
+
+		if (keys[DIK_W]) {
+			translate.z の成分更新;
+		}
+		if (keys[DIK_S]) {
+			translate.z の成分更新;
+		}
+		if (keys[DIK_D]) {
+			translate.x の成分更新;
+		}
+		if (keys[DIK_A]) {
+			translate.x の成分更新;
+		}
+
+		Vector3 cross = Cross(v1, v2);
+
+		rotate.y += 0.03f;
+
+		Matrix4x4 worldMatrix = MakeAffineMatrix({1.0f,1.0f,1.0f}, rotate, translate);
+
+		//ビュー変換行列を作るためにカメラポジションで行列作成
+		Matrix4x4 cameraMatrix =
+			MakeAffineMatrix({ 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, cameraPosition);
+
+		//↑のカメラ行列を反転してビュー座標系変換行列を作る
+		Matrix4x4 viewMatrix = Inverse(cameraMatrix);
+
+
+		//透視投影行列を作る
+		Matrix4x4 projectionMatrix =
+			MakePerspectiveFovMatrix(0.45f, float(kWindowWidth) / float(kWindowHeight), 0.1f, 100.0f);
+
+		//ビュー変換行列と透視投影を掛けてワールド座標系→ビュー座標系→透視投影座標系への
+		//変換行列を作る
+		Matrix4x4 worldViewProjectionMatrix =
+			Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
+
+		// ViewportMatrixを作る
+		Matrix4x4 viewportMatrix =
+			MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
+
+		// 3角形ポリゴンの各頂点をScreen空間へ変換する
+		Vector3 screenVertices[3];
+		for (uint32_t i = 0; i < 3; ++i) {
+			// Transformを使うと同次座標系->デカルト座標系の処理が行われる
+			Vector3 ndcVertex = Transform(kLocalVertices[i], worldViewProjectionMatrix);
+
+			// Viewport座標系への変換を行ってScreen空間へ
+			screenVertices[i] = Transform(ndcVertex, viewportMatrix);
+		}
+
+		// 描画
+		Novice::DrawTriangle(
+			int(screenVertices[0].x), int(screenVertices[0].y), int(screenVertices[1].x),
+			int(screenVertices[1].y), int(screenVertices[2].x), int(screenVertices[2].y), RED,
+			kFillModeSolid);
+
+		VectorScreenPrintf(0, 0, cross, "Cross");
+
 
 		///
 		/// ↑更新処理ここまで
@@ -398,9 +463,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		
 		//MatrixScreenPrintf(0, kRowHeight, worldMatrix, "worldMatrix");
 
-		//MatrixScreenPrintf(0, 0, orthographicMatrix, "orthographicMatrix");
-		//MatrixScreenPrintf(0, kRowHeight * 5, perspectiveFovMatrix, "perspectiveFovMatrix");
-		MatrixScreenPrintf(0, kRowHeight * 10, viewportMatrix, "viewportMatrix");
+		/*MatrixScreenPrintf(0, 0, orthographicMatrix, "orthographicMatrix");
+		MatrixScreenPrintf(0, kRowHeight * 5, perspectiveFovMatrix, "perspectiveFovMatrix");
+		MatrixScreenPrintf(0, kRowHeight * 10, viewportMatrix, "viewportMatrix");*/
+
+		 MatrixScreenPrintf(0, kRowHeight * 5, perspectiveFovMatrix, "perspectiveFovMatrix");
 
 		///
 		/// ↑描画処理ここまで
