@@ -149,7 +149,7 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale,const Vector3& rotate,const Vect
 {
 	Matrix4x4 result = Multiply(Multiply(MakeRotateXMatrix(rotate.x), MakeRotateYMatrix(rotate.y)),MakeRotateZMatrix(rotate.z));
 
-	result.m[0][0] = scale.x;
+	result.m[0][0] = rotate.x;
 	result.m[0][1] = scale.x;
 	result.m[0][2] = scale.x;
 	result.m[0][3] = 0;
@@ -208,6 +208,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
+	
 		Matrix4x4 worldMatrix = MakeAffineMatrix(scale, rotate, translate);
 
 		///
