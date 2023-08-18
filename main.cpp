@@ -1,32 +1,27 @@
-﻿#define _USE_MATH_DEFINES
-#include <Novice.h>
-#include <cmath>
-#include <assert.h>
-#include "DirectXCommon.h"
-#include <cassert>
-#include <numbers>
+﻿#include <Novice.h> 
+#define _USE_MATH_DEFINES 
+#include <cmath> 
+#include <assert.h> 
+#include <numbers> 
 #include <ImGuiManager.h>
+#include <cstdint>
 
 const char kWindowTitle[] = "GC2C_08_タカハシシンイチ_MT3_01_02";
 
-struct Vector2 {
-	float x, y;
+struct Matrix4x4
+{
+	float m[4][4];
 };
 
-struct Vector3 {
+struct Vector3 
+{
 	float x, y, z;
 };
 
-struct Vector4 { 
-	float x, y, z, w;
-};
-
-struct Matrix3x3 {
-	float m[3][3];
-};
-
-struct Matrix4x4 {
-	float m[4][4];
+struct Sphere
+{
+	Vector3 center;
+	float radius;
 };
 
 static const int kRowHeight = 20;
@@ -489,14 +484,14 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale,const Vector3& rotate,const Vect
 {
 	Matrix4x4 matScale = MakeScaleMatrix(scale);
 
-	/*Matrix4x4 matRotateX = MakeRotateXMatrix(rotate.x);
+	Matrix4x4 matRotateX = MakeRotateXMatrix(rotate.x);
 	Matrix4x4 matRotateY = MakeRotateYMatrix(rotate.y);
 	Matrix4x4 matRotateZ = MakeRotateZMatrix(rotate.z);
-	Matrix4x4 matRot = matRotateX * matRotateY * matRotateZ;*/
+	Matrix4x4 matRot = matRotateX * matRotateY * matRotateZ;
 
-	//Matrix4x4 matTranslate = MakeTranslateMatrix(translate);
+	Matrix4x4 matTranslate = MakeTranslateMatrix(translate);
 
-	//Matrix4x4 result =matScale*matRot*matTranslate;
+	Matrix4x4 result =matScale*matRot*matTranslate;
 
 	Matrix4x4 result = Multiply(
 		Multiply(MakeRotateXMatrix(rotate.x), MakeRotateYMatrix(rotate.y)),
@@ -655,34 +650,6 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectMatrix, const 
 	}
 }
 
-
-// 正射影行列
-//Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip)
-//{
-//	Matrix4x4 result{};
-//	result.m[0][0] =2/(right-left);
-//	result.m[0][1] = 0.0f;
-//	result.m[0][2] = 0.0f;
-//	result.m[0][3] = 0.0f;
-//
-//	result.m[1][0] = 0.0f;
-//	result.m[1][1] = 2/(top-bottom);
-//	result.m[1][2] = 0.0f;
-//	result.m[1][3] = 0.0f;
-//
-//	result.m[2][0] = 0.0f;
-//	result.m[2][1] = 0.0f;
-//	result.m[2][2] = 1/(farClip-nearClip);
-//	result.m[2][3] = 0.0f;
-//
-//	result.m[3][0] = (left+right)/(left-right) ;
-//	result.m[3][1] = (top+bottom)/(bottom-top);
-//	result.m[3][2] = nearClip/(nearClip-farClip);
-//	result.m[3][3] = 1.0f;
-//
-//	return result;
-//}
-
 // ビューポート行列
 Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth)
 {
@@ -710,16 +677,6 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 	return result;
 }
 
-//void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label) {
-//	Novice::ScreenPrintf(x, y-15, "%s", label);
-//	for (int row = 0; row < 4; ++row) {
-//		for (int column = 0;column < 4;++column) {
-//			Novice::ScreenPrintf(
-//				x + column * kColumnWidth, y + row * kRowHeight, "%6.02f", matrix.m[row][column]);
-//		}
-//	}
-//}
-
 void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label) {
 	Novice::ScreenPrintf(x, y, "%.02f", vector.x);
 	Novice::ScreenPrintf(x + kColumnWidth, y, "%.02f", vector.y);
@@ -738,20 +695,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char preKeys[256] = {0};
 
 	Vector3 rotate{};
+
 	Vector3 translate{};
-	Vector3 cameraPosition{ 0.0f, 0.0f, -5.0f };
-	//Vector3 scale{ 1.2f,0.79f,-2.1f };
+	
+	Vector3 cameraTranslate = { 0.0f,1.9f,-6.49f };
 
-	Vector3 kLocalVertices[3]
+	Vector3 cameraRotate = { 0.26f,0.0f,0.0f };
+
+	Sphere sphere =
 	{
-		{-0.5f,-0.5f,0.0f},
-		{0.0f,0.5f,0.0f},
-		{0.5f,-0.5f,0.0f}
+		{0.0f,0.0f,0.0f},
+		0.5f
 	};
-
-	Vector3 v1{ 1.2f,-3.9f,2.5f };
-	Vector3 v2{ 2.8f,0.4f,-1.3f };
-	Vector3 cross = Cross(v1, v2);
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -762,36 +717,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		memcpy(preKeys, keys, 256);
 		Novice::GetHitKeyStateAll(keys);
 
+		//ImGui
+		ImGui::SetNextWindowPos({ 0,0 });
+		ImGui::SetNextWindowSize({ 300, 200 });
+
+		ImGui::Begin("Window");
+
+		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
+		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
+		ImGui::DragFloat3("SphereCenter", &sphere.center.x, 0.01f);
+		ImGui::DragFloat3("SphereRadius", &sphere.radius, 0.01f);
+
+		ImGui::End();
+
 		///
 		/// ↓更新処理ここから
 		///
 
-		//Matrix4x4 orthographicMatrix =
-		//	MakeOrthographicMatrix(-160.0f, 160.0f, 200.0f, 300.0f, 0.0f, 1000.0f);
-		/*Matrix4x4 perspectiveFovMatrix =
-			MakePerspectiveFovMatrix(0.63f, 1.33, 0.1f, 1000.0f);*/
-
-		if (keys[DIK_W]) {
-			translate.z+=0.1f;
-		}
-		if (keys[DIK_S]) {
-			translate.z-=0.1f;
-		}
-		if (keys[DIK_D]) {
-			translate.x+=0.1f;
-		}
-		if (keys[DIK_A]) {
-			translate.x-=0.1f;
-		}
-
-		// 回る
-		rotate.y += 0.03f;
-
 		Matrix4x4 worldMatrix = MakeAffineMatrix({1.0f,1.0f,1.0f}, rotate, translate);
 
 		//ビュー変換行列を作るためにカメラポジションで行列作成
-		Matrix4x4 cameraMatrix =
-			MakeAffineMatrix({ 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, cameraPosition);
+		Matrix4x4 cameraMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, cameraRotate, cameraTranslate);
 
 		//↑のカメラ行列を反転してビュー座標系変換行列を作る
 		Matrix4x4 viewMatrix = Inverse(cameraMatrix);
@@ -809,16 +755,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewportMatrix =
 			MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-		// 3角形ポリゴンの各頂点をScreen空間へ変換する
-		Vector3 screenVertices[3];
-		for (uint32_t i = 0; i < 3; ++i) {
-			// Transformを使うと同次座標系->デカルト座標系の処理が行われる
-			Vector3 ndcVertex = Transform(kLocalVertices[i], worldViewProjectionMatrix);
-
-			// Viewport座標系への変換を行ってScreen空間へ
-			screenVertices[i] = Transform(ndcVertex, viewportMatrix);
-		}
-
 		///
 		/// ↑更新処理ここまで
 		///
@@ -827,12 +763,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 		
-		//MatrixScreenPrintf(0, kRowHeight, worldMatrix, "worldMatrix");
-		/*MatrixScreenPrintf(0, 0, orthographicMatrix, "orthographicMatrix");
-		MatrixScreenPrintf(0, kRowHeight * 5, perspectiveFovMatrix, "perspectiveFovMatrix");
-		MatrixScreenPrintf(0, kRowHeight * 10, viewportMatrix, "viewportMatrix");*/
-		//MatrixScreenPrintf(0, kRowHeight * 5, perspectiveFovMatrix, "perspectiveFovMatrix");
-		 
 		// 描画
 		DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 		DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, BLACK);
