@@ -7,7 +7,7 @@
 #include <numbers>
 #include <ImGuiManager.h>
 
-const char kWindowTitle[] = "GC2C_08_タカハシシンイチ_MT3_01_01";
+const char kWindowTitle[] = "GC2C_08_タカハシシンイチ_MT3_01_02";
 
 struct Vector2 {
 	float x, y;
